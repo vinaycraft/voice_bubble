@@ -1,70 +1,130 @@
-# Getting Started with Create React App
+# Voice Bubble - Voice Recording Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A voice recording application with interactive floating bubbles using Matter.js physics. Recordings are stored in MongoDB and displayed as colorful, floating bubbles that can be played and burst.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Voice Recording**: Record audio with a 15-second maximum limit
+- **Floating Bubbles**: Recordings displayed as physics-simulated floating bubbles
+- **Interactive**: Tap bubbles to play audio and burst them
+- **Auto-Expiration**: Bubbles automatically expire after 24 hours if not played
+- **Single Playback**: Only one recording plays at a time
+- **Memory Efficient**: Audio fetched only when bubble is clicked
+- **Visual Feedback**: Animated sound waves, countdown timer, and playing indicator
 
-### `npm start`
+## Prerequisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Node.js installed
+- MongoDB installed and running
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Setup
 
-### `npm test`
+### 1. Install Dependencies
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+```
 
-### `npm run build`
+### 2. Start MongoDB
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Make sure MongoDB is running on your system. The default connection string is `mongodb://localhost:27017/voice_bubble`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+If your MongoDB is running on a different host or port, update the connection string in `server.js`:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```javascript
+mongoose.connect('mongodb://your-host:your-port/voice_bubble')
+```
 
-### `npm run eject`
+## Running the Application
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Start the Backend Server
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+In one terminal:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm run server
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+The server will run on `http://localhost:5000`
 
-## Learn More
+### Start the React Frontend
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+In another terminal:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm start
+```
 
-### Code Splitting
+The frontend will run on `http://localhost:3000`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Usage
 
-### Analyzing the Bundle Size
+1. Open `http://localhost:3000` in your browser
+2. **Recording Page** (Home):
+   - Tap the microphone bubble to start recording
+   - Recording automatically stops after 15 seconds (countdown shown)
+   - Tap again to stop recording early
+   - Recording is automatically saved to the database
+   - Click "Bubbles" to navigate to the recordings page
+3. **Bubbles Page** (`/recordings`):
+   - Each recording is displayed as a colorful floating bubble
+   - Bubbles float freely using Matter.js physics (zero gravity)
+   - Tap any bubble to play the recording
+   - After playing, the bubble bursts and is deleted
+   - Only one recording can play at a time
+   - Bubbles automatically expire after 24 hours if not played
+   - Click "Record" to return to the recording page
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Technical Details
 
-### Making a Progressive Web App
+### Recording Limit
+- Maximum recording duration: 15 seconds
+- Automatic countdown timer displayed during recording
+- Recording stops automatically when timer reaches 0
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Bubble Expiration
+- Bubbles expire after 24 hours from creation
+- Expired recordings are automatically deleted from database
+- Cleanup runs every minute while on the bubbles page
 
-### Advanced Configuration
+### Audio Playback
+- Only one recording plays at a time
+- Other bubbles are unclickable during playback
+- Visual indicator shows when audio is playing
+- Audio is fetched from backend only when bubble is clicked (memory efficient)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Physics Simulation
+- Uses Matter.js for realistic bubble physics
+- Zero gravity for floating effect
+- Gentle random forces keep bubbles moving
+- Invisible walls keep bubbles within screen bounds
 
-### Deployment
+## API Endpoints
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- `POST /api/recordings` - Upload a voice recording
+- `GET /api/recordings` - Get list of all recordings
+- `GET /api/recordings/:id` - Get audio data for a specific recording
+- `DELETE /api/recordings/:id` - Delete a specific recording
 
-### `npm run build` fails to minify
+## Database Schema
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+The application uses Mongoose with the following schema:
+
+```javascript
+{
+  audioData: Buffer,
+  contentType: String,
+  createdAt: Date
+}
+```
+
+The collection name is automatically created as `recordings` in the `voice_bubble` database.
+
+## Technologies Used
+
+- **Frontend**: React, React Router DOM
+- **Physics**: Matter.js
+- **Backend**: Express.js
+- **Database**: MongoDB with Mongoose
+- **File Upload**: Multer
+- **Styling**: CSS with animations
