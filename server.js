@@ -9,7 +9,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost:27017/voice_bubble').then(() => {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/voice_bubble').then(() => {
   console.log('Connected to MongoDB database');
 }).catch((err) => {
   console.error('Error connecting to MongoDB:', err);

@@ -26,9 +26,10 @@ function RecordingsPage() {
     if (expiredRecordings.length > 0) {
       console.log('Found', expiredRecordings.length, 'expired recordings, deleting...');
       
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       for (const recording of expiredRecordings) {
         try {
-          await fetch(`http://localhost:5000/api/recordings/${recording._id}`, {
+          await fetch(`${apiUrl}/api/recordings/${recording._id}`, {
             method: 'DELETE',
           });
           console.log('Deleted expired recording:', recording._id);
@@ -46,7 +47,8 @@ function RecordingsPage() {
 
   const fetchRecordings = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/recordings');
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/recordings`);
       if (response.ok) {
         const data = await response.json();
         console.log('Fetched recordings:', data);
@@ -82,7 +84,8 @@ function RecordingsPage() {
     // Fetch and play audio only when bubble is clicked (memory efficient)
     try {
       console.log('Fetching audio from backend...');
-      const response = await fetch(`http://localhost:5000/api/recordings/${recordingId}`);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/recordings/${recordingId}`);
       if (response.ok) {
         console.log('Audio fetched successfully');
         const audioBlob = await response.blob();
@@ -134,7 +137,8 @@ function RecordingsPage() {
     console.log('Bubble removed from physics world');
     
     // Delete recording from backend (but don't update state to prevent re-render)
-    fetch(`http://localhost:5000/api/recordings/${recordingId}`, {
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    fetch(`${apiUrl}/api/recordings/${recordingId}`, {
       method: 'DELETE',
     }).then(response => {
       if (response.ok) {

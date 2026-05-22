@@ -75,7 +75,8 @@ function App() {
     formData.append('audio', audioBlob, 'recording.webm');
 
     try {
-      const response = await fetch('http://localhost:5000/api/recordings', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/recordings`, {
         method: 'POST',
         body: formData,
       });
