@@ -126,3 +126,13 @@
   background: rgba(99, 102, 241, 0.8);
   color: white;
 }
+
+.copyright {
+  pointer-events: auto;
+  align-self: center;
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+}

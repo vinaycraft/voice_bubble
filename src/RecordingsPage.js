@@ -349,6 +349,10 @@ function RecordingsPage() {
             Bubbles
           </Link>
         </div>
+        
+        <div className="copyright">
+          © Developed by Vinay Patil™
+        </div>
       </div>
     </div>
   );
