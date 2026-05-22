@@ -14,7 +14,7 @@ function RecordingsPage() {
   const bubblesRef = useRef([]);
   const isPlayingRef = useRef(false);
 
-  const deleteExpiredRecordings = async (allRecordings) => {
+  const deleteExpiredRecordings = useCallback(async (allRecordings) => {
     const now = new Date();
     const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     
@@ -43,9 +43,9 @@ function RecordingsPage() {
       const createdAt = new Date(recording.createdAt);
       return createdAt >= twentyFourHoursAgo;
     });
-  };
+  }, []);
 
-  const fetchRecordings = async () => {
+  const fetchRecordings = useCallback(async () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const response = await fetch(`${apiUrl}/api/recordings`);
@@ -63,9 +63,8 @@ function RecordingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [deleteExpiredRecordings]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchRecordings();
 
@@ -77,7 +76,7 @@ function RecordingsPage() {
     return () => {
       clearInterval(intervalId);
     };
-  }, []);
+  }, [fetchRecordings]);
 
   const handleBubbleClick = useCallback(async (body, recordingId) => {
     console.log('handleBubbleClick called with recordingId:', recordingId);
